@@ -19,7 +19,12 @@ const Checkout = (props) => {
 				<lable htmlFor="city">City</lable>
 				<input type="text" id="city" />
 			</div>
+			<button type="button" onClick={props.onClose}>
+				Close
+			</button>
 			<button>Confrm</button>
 		</form>
 	);
 };
+
+export default Checkout;
