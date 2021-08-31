@@ -19,6 +19,19 @@ const Cart = (props) => {
 		cartCtx.addItem({ ...item, amount: 1 });
 	};
 
+	const sendCartItems = async (cart) => {
+		await fetch('https://hopeful-b618d.firebaseio.com/orders.json', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				orders: cart,
+				orderedItems: cartCtx.items,
+			}),
+		});
+	};
+
 	const orderHandler = () => {
 		setIsCheckout(true);
 	};
@@ -55,7 +68,9 @@ const Cart = (props) => {
 				<span>Total Amount</span>
 				<span>{totalAmount}</span>
 			</div>
-			{isCheckout && <Checkout onClose={props.onClose} />}
+			{isCheckout && (
+				<Checkout onSubmitCart={sendCartItems} onClose={props.onClose} />
+			)}
 			{!isCheckout && modalItems}
 		</Modal>
 	);

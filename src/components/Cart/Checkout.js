@@ -51,16 +51,18 @@ const Checkout = (props) => {
 		if (!formIsValid) {
 			return;
 		}
+
+		props.onSubmitCart({ nameInput, streetInput, postalCodeInput, cityInput });
 	};
 
-	const nameClasses = `${styles.form} ${name ? '' : styles.invalid}`;
-	const streetClasses = `${styles.form} ${street ? '' : styles.invalid}`;
-	const postalClasses = `${styles.form} ${postalCode ? '' : styles.invalid}`;
-	const cityClasses = `${styles.form} ${city ? '' : styles.invalid}`;
+	const nameClasses = `${styles.control} ${name ? '' : styles.invalid}`;
+	const streetClasses = `${styles.control} ${street ? '' : styles.invalid}`;
+	const postalClasses = `${styles.control} ${postalCode ? '' : styles.invalid}`;
+	const cityClasses = `${styles.control} ${city ? '' : styles.invalid}`;
 
 	return (
-		<form className={nameClasses} onSubmit={confirmHandler}>
-			<div className={styles.control}>
+		<form className={styles.form} onSubmit={confirmHandler}>
+			<div className={nameClasses}>
 				<label htmlFor="name">Your Name</label>
 				<input type="text" id="name" ref={nameInputRef} />
 				{!name && <p>Please enter a valid name</p>}
@@ -78,7 +80,7 @@ const Checkout = (props) => {
 			<div className={cityClasses}>
 				<label htmlFor="city">City</label>
 				<input type="text" id="city" ref={cityInputRef} />
-				{!nacityme && <p>Please enter a valid city</p>}
+				{!city && <p>Please enter a valid city</p>}
 			</div>
 			<div className={styles.actions}>
 				<button type="button" onClick={props.onClose}>
