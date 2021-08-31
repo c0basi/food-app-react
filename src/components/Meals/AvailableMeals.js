@@ -31,11 +31,14 @@ import MealItem from './MealItem/MealItem';
  */
 const AvailableMeals = () => {
 	const [originalMeals, setOriginalMeals] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState(null);
 
 	const fetchMealsHandler = async () => {
+		setIsLoading(true);
 		try {
 			const response = await fetch(
-				'https://hopeful-b618d.firebaseio.com/meals.json'
+				'https://hopeful-b618d.firebaseio.com/meals'
 			);
 			if (!response.ok) {
 				throw new Error('Soemthing went wrong');
@@ -55,27 +58,40 @@ const AvailableMeals = () => {
 			setOriginalMeals(mealArray);
 		} catch (err) {
 			console.log(err.message);
+			setError(err.message);
 		}
+		setIsLoading(false);
 	};
 
 	useEffect(() => {
 		fetchMealsHandler();
 	}, []);
 
+	if (isLoading) {
+		return (
+			<section className={styles.loading}>
+				<p>Loading ...</p>
+			</section>
+		);
+	}
+
 	return (
 		<section className={styles.meals}>
 			<Card>
-				<ul>
-					{originalMeals.map((meals) => (
-						<MealItem
-							key={meals.id}
-							id={meals.id}
-							price={meals.price}
-							name={meals.name}
-							description={meals.description}
-						/>
-					))}
-				</ul>
+				{!error && (
+					<ul>
+						{originalMeals.map((meals) => (
+							<MealItem
+								key={meals.id}
+								id={meals.id}
+								price={meals.price}
+								name={meals.name}
+								description={meals.description}
+							/>
+						))}
+					</ul>
+				)}
+				{error && <p className={styles.error}>{error}</p>}
 			</Card>
 		</section>
 	);
