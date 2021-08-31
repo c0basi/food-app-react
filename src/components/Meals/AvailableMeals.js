@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './AvailableMeals.module.css';
 import Card from '../UI/Card';
 import MealItem from './MealItem/MealItem';
-const DUMMY_MEALS = [
+/* const DUMMY_MEALS = [
 	{
 		id: 'm1',
 		name: 'Sushi',
@@ -28,13 +28,45 @@ const DUMMY_MEALS = [
 		price: 18.99,
 	},
 ];
-
+ */
 const AvailableMeals = () => {
+	const [originalMeals, setOriginalMeals] = useState([]);
+
+	const fetchMealsHandler = async () => {
+		try {
+			const response = await fetch(
+				'https://hopeful-b618d.firebaseio.com/meals.json'
+			);
+			if (!response.ok) {
+				throw new Error('Soemthing went wrong');
+			}
+			const mealObj = await response.json();
+			console.log(mealObj);
+
+			const mealArray = [];
+			for (const key in mealObj) {
+				mealArray.push({
+					id: key,
+					name: mealObj[key].name,
+					description: mealObj[key].description,
+					price: mealObj[key].price,
+				});
+			}
+			setOriginalMeals(mealArray);
+		} catch (err) {
+			console.log(err.message);
+		}
+	};
+
+	useEffect(() => {
+		fetchMealsHandler();
+	}, []);
+
 	return (
 		<section className={styles.meals}>
 			<Card>
 				<ul>
-					{DUMMY_MEALS.map((meals) => (
+					{originalMeals.map((meals) => (
 						<MealItem
 							key={meals.id}
 							id={meals.id}
