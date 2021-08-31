@@ -38,7 +38,7 @@ const AvailableMeals = () => {
 		setIsLoading(true);
 		try {
 			const response = await fetch(
-				'https://hopeful-b618d.firebaseio.com/meals'
+				'https://hopeful-b618d.firebaseio.com/meals.json'
 			);
 			if (!response.ok) {
 				throw new Error('Soemthing went wrong');
