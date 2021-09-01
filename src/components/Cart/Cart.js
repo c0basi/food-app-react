@@ -26,7 +26,7 @@ const Cart = (props) => {
 		setIsSubmitting(true);
 		try {
 			const response = await fetch(
-				'https://hopeful-b618d.firebaseio.com/orders',
+				'https://hopeful-b618d.firebaseio.com/orders/json',
 				{
 					method: 'POST',
 					headers: {
