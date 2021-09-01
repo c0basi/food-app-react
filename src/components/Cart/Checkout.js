@@ -2,7 +2,7 @@ import { useRef, useReducer } from 'react';
 import styles from './Checkout.module.css';
 
 const isEmpty = (value) => value.trim() === '';
-const isFiveChars = (value) => value.trim().length === 5;
+const isFiveChars = (value) => value.trim().length >= 5;
 
 const loginReducer = (state, action) => {
 	switch (action.type) {

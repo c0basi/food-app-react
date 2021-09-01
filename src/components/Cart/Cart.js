@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 import styles from './Cart.module.css';
 import Modal from '../UI/Modal';
 import CartContext from '../../store/cart-context';
@@ -8,6 +8,8 @@ import Checkout from './Checkout';
 const Cart = (props) => {
 	const cartCtx = useContext(CartContext);
 	const [isCheckout, setIsCheckout] = useState(false);
+	const [didSubmit, setDidSubmit] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
 
@@ -20,6 +22,7 @@ const Cart = (props) => {
 	};
 
 	const sendCartItems = async (cart) => {
+		setIsSubmitting(true);
 		await fetch('https://hopeful-b618d.firebaseio.com/orders.json', {
 			method: 'POST',
 			headers: {
@@ -30,6 +33,9 @@ const Cart = (props) => {
 				orderedItems: cartCtx.items,
 			}),
 		});
+		setIsSubmitting(false);
+		setDidSubmit(true);
+		cartCtx.clearCart();
 	};
 
 	const orderHandler = () => {
@@ -61,8 +67,9 @@ const Cart = (props) => {
 			{hasCartItems && <button onClick={orderHandler}>Order</button>}
 		</div>
 	);
-	return (
-		<Modal onClose={props.onClose}>
+
+	const cartModal = (
+		<Fragment>
 			{cartItems}
 			<div className={styles.total}>
 				<span>Total Amount</span>
@@ -72,6 +79,27 @@ const Cart = (props) => {
 				<Checkout onSubmitCart={sendCartItems} onClose={props.onClose} />
 			)}
 			{!isCheckout && modalItems}
+		</Fragment>
+	);
+
+	const didSubmitModalContent = (
+		<React.Fragment>
+			<p>Successfully sent the order!</p>
+			<div className={styles.actions}>
+				<button className={styles.button} onClick={props.onClose}>
+					Close
+				</button>
+			</div>
+		</React.Fragment>
+	);
+
+	const subMittingModal = <p>Submitting.....</p>;
+
+	return (
+		<Modal onClose={props.onClose}>
+			{!isSubmitting && !didSubmit && cartModal}
+			{isSubmitting && subMittingModal}
+			{!isSubmitting && didSubmit && didSubmitModalContent}
 		</Modal>
 	);
 };
