@@ -10,6 +10,7 @@ const Cart = (props) => {
 	const [isCheckout, setIsCheckout] = useState(false);
 	const [didSubmit, setDidSubmit] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState(null);
 
 	const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
 
@@ -23,16 +24,27 @@ const Cart = (props) => {
 
 	const sendCartItems = async (cart) => {
 		setIsSubmitting(true);
-		await fetch('https://hopeful-b618d.firebaseio.com/orders.json', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				orders: cart,
-				orderedItems: cartCtx.items,
-			}),
-		});
+		try {
+			const response = await fetch(
+				'https://hopeful-b618d.firebaseio.com/orders',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						orders: cart,
+						orderedItems: cartCtx.items,
+					}),
+				}
+			);
+			if (!response.ok) {
+				throw new Error('Something went wrong');
+			}
+		} catch (err) {
+			setError(err.message);
+		}
+
 		setIsSubmitting(false);
 		setDidSubmit(true);
 		cartCtx.clearCart();
@@ -93,13 +105,25 @@ const Cart = (props) => {
 		</React.Fragment>
 	);
 
+	const errorModal = (
+		<React.Fragment>
+			<p className={styles.error}>Failed to submit cart </p>
+			<div className={styles.actions}>
+				<button className={styles.button} onClick={props.onClose}>
+					Close
+				</button>
+			</div>
+		</React.Fragment>
+	);
+
 	const subMittingModal = <p>Submitting.....</p>;
 
 	return (
 		<Modal onClose={props.onClose}>
-			{!isSubmitting && !didSubmit && cartModal}
-			{isSubmitting && subMittingModal}
-			{!isSubmitting && didSubmit && didSubmitModalContent}
+			{error && errorModal}
+			{!error && !isSubmitting && !didSubmit && cartModal}
+			{!error && isSubmitting && subMittingModal}
+			{!error && !isSubmitting && didSubmit && didSubmitModalContent}
 		</Modal>
 	);
 };
