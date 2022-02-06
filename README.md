@@ -1,4 +1,5 @@
 # food-app-react
+A simple food-odering webpage
 
 ## Libraries Used
 
