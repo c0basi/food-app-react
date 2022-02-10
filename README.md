@@ -1,5 +1,5 @@
 # food-app-react
-A simple food-odering webpage
+A simple food-odering webpage with a firebase backend
 
 ## Libraries Used
 
